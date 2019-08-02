@@ -7,6 +7,7 @@ import com.sky.util.Jiami;
 
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.util.Log;
 
 public class BcyServer extends Server {
 
@@ -20,6 +21,7 @@ public class BcyServer extends Server {
 
 		String jsonAccount = sharedPreferences.getString(key, Jiami.jiami2String("{\"phone\":\"12345678900\"}"));
 		jsonAccount = Jiami.jiami2String(jsonAccount);
+//		Log.i("È¡³ö", jsonAccount);
 		super.setAccount(JSON.parseObject(jsonAccount, Account.class));
 	}
 
@@ -30,7 +32,7 @@ public class BcyServer extends Server {
 			thread.start();
 			SharedPreferences.Editor editor = sharedPreferences.edit();
 			editor.putString(key, new String(Jiami.jiami(JSON.toJSONString(super.getAccount()).getBytes())));
-			editor.commit();			
+			editor.commit();
 		} else {
 			synchronized (thread) {
 				thread.notify();

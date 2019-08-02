@@ -3,5 +3,5 @@
 
     <string name="app_name">自动接单app</string>
     <string name="hello_world">Hello world!</string>
-
+	<string name="title_activity_crash">CrashActivity</string>
 </resources>

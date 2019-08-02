@@ -127,35 +127,51 @@ public class XkqThread extends Thread {
 		String body=rs.body();	
 		//Log.i("2222", body);
 		
-		
-		String ipPortRegEx ="((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?):\\d+";
-		String useridRegEx="UserID=\\d+";
 		String guidRegEx="guid =\"\\w+\"";
-		String ipPort="";
-		String uid="";
 		String guid="";
-		
-		Pattern p = Pattern.compile(ipPortRegEx);
+
+		Pattern p = Pattern.compile(guidRegEx);
 		Matcher m = p.matcher(body);
-		if (m.find()) {
-			ipPort = m.group() ;
-			
-		}
-		p = Pattern.compile(useridRegEx);
-		m = p.matcher(body);
-		if (m.find()) {
-			 uid = m.group() ;
-		}
-		p = Pattern.compile(guidRegEx);
-		m = p.matcher(body);
 		if (m.find()) {
 			 guid = m.group();
 		}
 		guid=guid.replace("\"", "");
 		guid=guid.replace(" ", "");
 		guid=guid.replace("guid", "token");
-		Log.i("拿到地址", ipPort+"|   |"+uid+"|   |"+guid);
-		url="ws://"+ipPort+"/Task?"+uid+"&TaskPrice=&DownTaskPoint=0&TaskCategory=0&"+guid;	
+		//Log.i("拿到地址", ipPort+"|   |"+uid+"|   |"+guid);
+		//url="ws://"+ipPort+"/Task?"+uid+"&TaskPrice=&DownTaskPoint=0&TaskCategory=0&"+guid;
+		Log.i("token", guid);
+		
+		con = Jsoup.connect("http://aaa.698mn.com/site/acceptTask01.html");
+		con.cookies(cookie);
+		con.method(Method.POST);
+		con.header(Config.USER_AGENT, Config.USER_AGENT_VALUE2);
+		
+		con.data("outtime", "1562507338").data("PlatformTypes", "0")
+		.data("TaskType", "%E6%97%A0%E7%BA%BF%E7%AB%AF")
+		.data("TaskTypelen","2").data("TaskPriceEnd", "")
+		.data("FineTaskClassType","%E9%94%80%E9%87%8F%E4%BB%BB%E5%8A%A1")
+		.data("terminal", "1");
+		
+		
+		try {
+			rs = con.execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+			server.updateMessage("网络故障,请重新开始");
+			server.updateState("已停止");
+			return;
+		}
+		
+		body=rs.body();
+		
+		JSONObject jsonObject= JSON.parseObject(body);
+		String host= jsonObject.getString("host");
+		String uid=jsonObject.getString("uid");
+		this.url="ws://"+host+"/Task?UserID="+uid+"&TaskPrice=&DownTaskPoint=0&TaskCategory=0&"+guid;
+		Log.i("url",url);
+		//ws://211.159.185.14:9877/Task?UserID=19297&TaskPrice=&DownTaskPoint=0&TaskCategory=0&token=faa824ca91989ce86235bb53b68ea46d
+
 		connectWebSocket();
 	}
 	public void close(){

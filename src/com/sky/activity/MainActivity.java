@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
+import android.text.method.ScrollingMovementMethod;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -43,6 +44,7 @@ public class MainActivity extends Activity implements OnItemClickListener{
 	private SparseArray<Server> servers;
 	private TextView tvTitle;
 	private SharedPreferences sharedPreferences;
+	private TextView tvErrorMsg;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,12 @@ public class MainActivity extends Activity implements OnItemClickListener{
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 		this.context = this;
+		
+		Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler(handler));
+		
 		this.servers=new  SparseArray<Server>();
+		tvErrorMsg=(TextView)findViewById(R.id.errormsg);
+		tvErrorMsg.setMovementMethod(ScrollingMovementMethod.getInstance()); 
 		tvTitle=(TextView)findViewById(R.id.textView_title);
 		gridView = (GridView) findViewById(R.id.gridView1);
 		gridAdapter = new GridAdapter(this);
@@ -77,9 +84,12 @@ public class MainActivity extends Activity implements OnItemClickListener{
 	};
 	@Override
 	protected void onDestroy() {
-		unbindService(mConnection);
+		unbindService();
 		android.os.Process.killProcess(android.os.Process.myPid());
 		super.onDestroy();
+	}
+	public void unbindService(){
+		unbindService(mConnection);
 	}
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -124,6 +134,9 @@ public class MainActivity extends Activity implements OnItemClickListener{
 				if(!isActivate) {			
 					new ActivatePopupWindow(context, gridView, sharedPreferences.edit()).show();
 				}
+				break;
+			case 8://更新崩溃消息
+				tvErrorMsg.append(msg.obj.toString());
 				break;
 			default:
 				break;
@@ -177,13 +190,13 @@ public class MainActivity extends Activity implements OnItemClickListener{
 				servers.put(position,new EsxServer(sharedPreferences, handler, position));
 				break;
 			case 3:
-				servers.put(position, null);
+				//servers.put(position, null);
 				break;
 			case 4:
 				servers.put(position, new XbtServer(sharedPreferences, handler, position));
 				break;
 			case 5:
-				servers.put(position,null);
+				//servers.put(position,null);
 				break;
 			case 6:
 				servers.put(position,new BcyServer(sharedPreferences, handler, position));

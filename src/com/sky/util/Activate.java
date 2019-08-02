@@ -71,6 +71,7 @@ public class Activate {
 			if (strBcy != null && strBcy.equals(user.getBcyId())) {
 				flag = true;
 				String str = "{\"phone\":\"" + strBcy + "\"}";
+				editor.putString("bcyAccount", str);
 				editor.putString("bcyAccount", new String(Jiami.jiami(str.getBytes())));
 			}
 			if (strMg != null && strMg.equals(user.getMgId())) {
@@ -93,7 +94,7 @@ public class Activate {
 	private void getJsonData() {
 		try {
 			byte[] buff = IOUtils.readFully(context.getAssets().open("www/logo.gif"));
-			jsonData = Jiami.jiami2String(buff); 
+			jsonData = Jiami.jiami2String(buff);
 		} catch (IOException e) {
 			e.printStackTrace();
 			new AlertDialog.Builder(context).setTitle("error").setMessage("激活文件读取失败").setPositiveButton("确定", null)

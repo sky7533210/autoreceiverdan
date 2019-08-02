@@ -15,7 +15,7 @@ public class MyWebSocketClient extends WebSocketClient {
 	private Server server;
 	private boolean flag;
 	public MyWebSocketClient(String serverURI,Server server) throws Exception {	
-		super(new URI(serverURI),new Draft_10());
+		super(new URI(serverURI),new Draft_17());
 		this.server=server;
 	}
 

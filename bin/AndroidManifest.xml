@@ -24,6 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.simple.spiderman.CrashActivity"
+            android:label="@string/title_activity_crash" >
+        </activity>
         <service android:name="com.sky.service.MyService"></service>
     </application>
 

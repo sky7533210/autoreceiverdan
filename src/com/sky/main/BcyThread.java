@@ -43,8 +43,8 @@ public class BcyThread extends Thread {
 		
 	}
 	private void simulate() {
-		Map<String, String> parameter = new HashMap<String, String>();
 		
+		Map<String, String> parameter = new HashMap<String, String>();
 		parameter.put("c", "ShouYe");
 		parameter.put("a", "getApageTask");
 		parameter.put("name", account.getPhone());
@@ -75,7 +75,20 @@ public class BcyThread extends Thread {
 				try {
 					Response rs = con.execute();
 					cookie.putAll(rs.cookies());
-					Data data = JSON.parseObject(rs.body(), Data.class);
+					
+					String body=rs.body();
+					Data data=null;
+					try {
+						data = JSON.parseObject(body, Data.class);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+						JSONObject jsonObject= JSON.parseObject(body);
+						 if( jsonObject.getString("msg").contains("当前访问人数过多")) {
+							 --page;
+							 server.updateMessage("当前访问人数过多,请重试");
+							 continue;
+						 }					 
+					}
 					status=data.getStatus();
 					if(status==0) {
 						List<Task> tasks=data.getData();
